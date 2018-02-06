@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>终极音乐播放器</title>
+		<meta name="keywords" content="音乐播放器" />
+		<meta name="description" content="音频输出 歌词跟随" />
+		<style>
+			*{margin: 0;padding: 0;}
+			body
+			{
+				background: pink;
+			}
+			#box
+			{
+				height: 580px;
+				width: 320px;
+				background: gray;
+				margin: 25px auto;
+				margin-bottom: 0;
+				display: inline-block;
+			}
+			.top
+			{
+				width: 320px;
+				height: 23px;
+				background: url(img/1.png);
+			}
+			.song
+			{
+				width: 320px;
+				height: 30px;
+				background: url(img/2.png);
+				color: #fff;
+				text-align: center;
+				font-size: 22px;
+			}
+			.singer
+			{
+				width: 320px;
+				height: 20px;
+				color: #fff;
+				text-align: center;
+				line-height: 20px;
+			}
+			.player
+			{
+				height: 190px;
+				width: 190px;
+				background: url(img/3.png);
+				margin: auto;
+				cursor: pointer;
+				border-radius: 50%;
+			}
+			.rotate
+			{
+				animation: rot 10s linear infinite;
+			}
+			@keyframes rot
+			{
+				from{transform: rotate(0deg);}
+				to{transform: rotate(360deg);}
+			}
+			.lrc
+			{
+				width: 310px;
+				height: 300px;
+				border: 2px solid red;
+				margin: 10px auto;
+				text-align: center;
+                color: #fff;
+                font-size: 16px;
+                overflow: hidden;
+                line-height: 20px;
+			}
+			.content
+			{
+				position: relative;
+				left: 0;
+				top: 0;
+			}
+			#canvas
+			{
+				background:#FBF1F4;
+				margin: 25px 140px;
+				display: block;
+				float: left;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="box">
+			<div class="top"></div>
+			<div class="song">不再联系</div>
+			<div class="singer">夏天Alex</div>
+			<div class="player"></div>
+			<div class="lrc">
+				<div class="content"></div>
+			</div>
+			<audio src="music/夏天Alex - 不再联系.mp3" id="music"></audio>
+		</div>
+		<canvas id="canvas" height="300" width="500"></canvas>
+		<textarea id="text" style="display: none;">
+			[ti:不再联系]
+			[ar:夏天Alex]
+			[00:00.00]不再联系
+			[00:02.69]词/曲/唱：夏天Alex
+			[00:18.78]也许还能在网上看到你的消息 
+			[00:22.59]也许我唱的歌还存在你的手机
+			[00:26.13]也许我爱你埋在心底变成秘密 
+			[00:29.73]也许你想我的时候我也在想你
+			[00:36.02]多少次我告诉自己 
+			[00:39.60]此情可待已成追忆
+			[00:43.09]多少次我告诫自己 
+			[00:46.78]不再为你流泪到一败涂地
+			[00:50.57]我和你不再联系 
+			[00:52.21]希望你不要介意 
+			[00:54.06]要怪就怪当初没在一起
+			[00:57.47]而你对现在也比较满意 
+			[01:01.12]所以我留下来也没有道理
+			[01:05.44]我和你断了联系 
+			[01:07.09]不代表我不想你 
+			[01:08.93]走到哪里还是会有惦记
+			[01:12.81]而我也开始试着去忘记 
+			[01:16.20]抹去我们过去的放弃的所有交集
+			[01:36.44]也许还能在网上看到你的消息
+			[01:39.74]也许我唱的歌还存在你的手机
+			[01:43.42]也许我爱你埋在心底变成秘密
+			[01:47.31]也许你想我的时候我也在想你
+			[01:53.57]多少次我告诉自己
+			[01:57.02]此情可待已成追忆
+			[02:00.63]多少次我告诫自己
+			[02:04.27]不再为你流泪到一败涂地
+			[02:08.04]我和你不再联系
+			[02:09.73]希望你不要介意
+			[02:11.55]要怪就怪当初没在一起
+			[02:15.25]而你对现在也比较满意
+			[02:18.84]所以我留下来也没有道理
+			[02:22.79]我和你断了联系
+			[02:24.49]不代表我不想你
+			[02:26.43]走到哪里还是会有惦记
+			[02:30.11]而我也开始试着去忘记
+			[02:33.67]抹去我们过去的放弃的所有交集		
+			[02:38.11]我和你不再联系
+			[02:39.33]希望你不要介意
+			[02:41.23]要怪就怪当初没在一起
+			[02:44.82]而你对现在也比较满意
+			[02:48.56]所以我留下来也没有道理
+			[02:52.32]我和你断了联系
+			[02:53.96]不代表我不想你
+			[02:55.93]走到哪里还是会有惦记
+			[02:59.57]而我也开始试着去忘记
+			[03:03.26]抹去我们过去的放弃的所有交集
+		</textarea>
+		<script>
+			var oPlayer=document.getElementsByClassName('player')[0];
+			var oMusic=document.getElementById('music');
+			var oText=document.getElementById('text');
+			var oContent=document.getElementsByClassName('content')[0];
+			var onOff=true;//设置播放标志
+			var html='';
+			oPlayer.onclick=function(){
+				if(onOff==true)
+				{
+					oMusic.play();
+					this.className='player rotate';
+				} 
+				else
+				{
+					oMusic.pause();
+					this.className='player';
+				}
+				onOff=!onOff;
+			}
+			var lrc=oText.value.split('[');
+			for(var i=0;i<lrc.length;i++)
+			{ 
+				//将字符串通过一次次分割变为数组最终得到所需要歌词
+				var lrcArr=lrc[i].split(']');
+				var time=lrcArr[0].split('.');
+				var times=time[0].split(':');
+				var ms=times[0]*60+times[1]*1;
+				if(lrcArr[1])
+				{
+					html+='<p id='+ms+'>'+lrcArr[1]+'</p>';
+				} 
+				oContent.innerHTML=html;
+			}
+			var ap=document.getElementsByTagName('p');
+			var num=0;
+			
+			//添加歌词监听(歌词同步)(十分巧妙厉害)
+			oMusic.addEventListener("timeupdate",function(){
+			var currTime=parseInt(this.currentTime);
+			if(document.getElementById(currTime))
+			{
+				for(var i=0;i<ap.length;i++)
+				{
+					ap[i].style.cssText='color: #fff; font-size: 16px;';
+				}
+				document.getElementById(currTime).style.cssText='color: red; font-size:20px;';
+				if(ap[8+num].id==currTime)
+				{
+					oContent.style.top=-20*num+'px';
+					num++;
+				}
+			} 
+			});
+			
+			//H5音频对象(兼容性写法)
+			window.AudioContext=window.AudioContext||window.webkitAudioContext||window.mozAudioContext;
+			
+			//原生js经动画(相当于递归)
+			window.requestAnimFrame=(function(){
+				return window.requestAnimationFrame||window.webkitRequestAnimationFrame||window.mozRequestAnimationFrame||
+				function(callback)
+				{
+					window.setTimeout(callback,1000/60);
+				};
+			})();
+			 
+			//创建一个音频对象
+			var actx=new AudioContext();
+			//创建一个分析节点
+			var analyser=actx.createAnalyser();
+			//创建一个媒体源节点(音乐数据)
+			var audioSrc=actx.createMediaElementSource(oMusic); 
+			//把媒体源和分析节点连接起来
+			audioSrc.connect(analyser);
+			//把分析节点和扬声器连接起来
+			analyser.connect(actx.destination);
+			
+			//设置canvas绘图颜色
+			var can=document.getElementById('canvas');
+			var cxt=can.getContext('2d');
+			//设置渐变色
+			var color1=cxt.createLinearGradient(can.width*0.5,0,can.width*0.5,150);
+			color1.addColorStop(0,'red');//0位置
+			color1.addColorStop(0.5,'pink');//0.5一半位置
+			color1.addColorStop(1,'greenyellow');//终点位置
+			//设置渐变色
+			var color2=cxt.createLinearGradient(can.width*0.5,150,can.width*0.5,300);
+			color2.addColorStop(0,'greenyellow');
+			color2.addColorStop(0.5,'pink');
+			color2.addColorStop(1,'red');
+			
+			//封装绘制图谱的方法
+			var nums=100;
+			function draw()
+			{
+				//创建一个与音频频次等长数组
+				var voicehigh=new Uint8Array(analyser.frequencyBinCount);
+				//把分析到的音频数据添加到数组中
+				analyser.getByteFrequencyData(voicehigh);
+				//音频数据步长
+				var step=Math.round(voicehigh.length/nums);
+				//先清空画布,以便重新绘制
+				cxt.clearRect(0,0,can.width,can.height);
+				for(var i=0;i<nums;i++)
+				{
+					//除以2为了不让音频条过高，超出画布范围
+					var high=voicehigh[step*i]/2;
+					cxt.fillStyle=color1;//设置fill方法的颜色
+					//从中间往右渲染
+					cxt.fillRect(i*10+can.width*0.5,150,7,-high+1);//宽度为7，总共是10，每个就有3间隔
+					//从中间往左渲染
+					cxt.fillRect(can.width*0.5-(i-1)*10,150,7,-high+1);
+					
+					cxt.fillStyle=color2;//设置fill方法的颜色
+					//cxt.fillRect(100,50,10,100);//xy坐标 wh矩形的宽高
+					cxt.fillRect(i*10+can.width*0.5,150,7,high+1);
+					cxt.fillRect(can.width*0.5-(i-1)*10,150,7,high+1);
+				}
+				requestAnimFrame(draw);
+			}
+			draw();  
+		</script>
+	</body>
+</html>
